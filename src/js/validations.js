@@ -118,26 +118,3 @@ function isOperationIDUnique(Operatio_id)
     }
     return true
 }
-console.log(siDateValide("2026-11-03"))
-console.log(siDateValide("2026-12-03"))
-console.log(siDateValide("2026-11-04"))
-console.log(siDateValide("2026-11-02"))
-
-
-
-
-
-
-
-// console.log(demoTab.clients);
-// console.log(isClientIDExists('c-demo-1'));
-// console.log(isClientIDExists('c-demo-100'));
-
-
-// console.log(siNomEstValide("&oussama200"));
-// console.log(siNomEstValide("o&ussama200"));
-// console.log(siNomEstValide("o"));
-// console.log(siNomEstValide("****"))
-// console.log(siNomEstValide("       "));
-// console.log(siNomEstValide("   ou  "));
-
