@@ -1,18 +1,24 @@
 
-import { creerDemo } from "./demo.js";
-import { calculateSolde } from "./operations.js";
+import { state } from "./state.js";
+import { calculateSolde } from "./calculations.js";
 
 export function initSearch() {
 
-    const demo = creerDemo();
-    const clients = demo.clients;
-    const operations = demo.operations;
+    const clients = state.clients;
+    const operations = state.operations;
 
     const searchInput = document.querySelector("#recherche");
     const filtre = document.querySelector("#filtre-statut");
 
+    const resetButton = document.querySelector("#reinitialiser-filtres");
+
+    const etatVide = document.querySelector("#etat-vide");
+    const etatAucunResultat = document.querySelector("#etat-aucun-resultat");
+
     const listeClients = document.querySelector("#liste-clients");
     const modeleClient = document.querySelector("#modele-client");
+
+    const tri = document.querySelector("#tri")
 
     // -------- NORMALISATION --------
 
@@ -28,7 +34,20 @@ export function initSearch() {
 
     function afficherClients(resultat) {
 
-        listeClients.innerHTML = "";
+    listeClients.innerHTML = "";
+
+    etatVide.classList.add("hidden");
+    etatAucunResultat.classList.add("hidden");
+
+    if (clients.length === 0) {
+
+        etatVide.classList.remove("hidden");
+
+    } else if (resultat.length === 0) {
+
+        etatAucunResultat.classList.remove("hidden");
+
+    } else {
 
         resultat.forEach(client => {
 
@@ -39,6 +58,7 @@ export function initSearch() {
             listeClients.appendChild(clone);
         });
     }
+}
 
     // -------- RECHERCHE + FILTRE --------
 
@@ -80,13 +100,65 @@ export function initSearch() {
         }
 
         afficherClients(resultat);
+
+
+        // -------- SORT --------
+
+        if (tri.value === "nom") {
+
+            resultat.sort((a, b) =>
+                a.nom.localeCompare(b.nom)
+            );
+
+        } else if (tri.value === "solde") {
+
+            resultat.sort((a, b) =>
+                calculateSolde(operations, b.id) -
+                calculateSolde(operations, a.id)
+            );
+
+        } else if (tri.value === "recent") {
+
+            resultat.sort((a, b) => {
+
+                const operationA = operations
+                    .filter(operation => operation.clientId === a.id)
+                    .sort((x, y) =>
+                        new Date(y.date) - new Date(x.date)
+                    )[0];
+
+                const operationB = operations
+                    .filter(operation => operation.clientId === b.id)
+                    .sort((x, y) =>
+                        new Date(y.date) - new Date(x.date)
+                    )[0];
+
+                const dateA = operationA ? new Date(operationA.date) : 0;
+                const dateB = operationB ? new Date(operationB.date) : 0;
+
+                return dateB - dateA;
+            });
+        }
+
+        afficherClients(resultat);
     }
 
-    // -------- EVENTS --------
+// -------- EVENTS --------
 
-    searchInput.addEventListener("input", filtrerClients);
-    filtre.addEventListener("change", filtrerClients);
+searchInput.addEventListener("input", filtrerClients);
+filtre.addEventListener("change", filtrerClients);
+tri.addEventListener("change", filtrerClients);
 
-    // Affichage initial
-    afficherClients(clients);
+resetButton.addEventListener("click", function() {
+    searchInput.value = "";
+    filtre.value = "tous";
+    tri.value = "nom";
+
+    filtrerClients();
+});
+
+// Affichage initial
+filtrerClients();
 }
+
+
