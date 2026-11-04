@@ -2,7 +2,7 @@ import {creerDemo} from './demo.js';
 const demoTab = creerDemo()
 function siNomEstValide(nom, minLength=2, maxLength=40)
 {
-    const regex = /[^\p{L}0-9 -]/u
+    const regex = /[^\p{L} -]/u
     const cp_nom= nom.trim()
     if (regex.test(cp_nom) || cp_nom.length > maxLength || cp_nom.length < minLength) {
         return false
@@ -12,6 +12,13 @@ function siNomEstValide(nom, minLength=2, maxLength=40)
         return true;
     }
 }
+
+function siNomUnique(nom, tab)
+{
+    const NomUnique = tab.clients.some((client) => client.nom.toLowerCase() == nom.toLowerCase())
+    return !NomUnique   
+}
+
 
 function siTelephoneValide(tel)
 {
@@ -31,49 +38,30 @@ function siTelephoneValide(tel)
     }
 }
 
-function siMontantValid(montant)
-{
-    const cp_montant = montant.trim()
-    if (Number.isInteger(cp_montant)) {
-        return true
-    }
-    else
-    {
-        return false
-    }
-}
-
-function isClientIDExists(clientID)
+function siClientIDUnique(clientID, tab)
 {
     
-    const clientWithID = demoTab.clients.filter((client) => client.id == clientID)
-    console.log(clientWithID);
-    
-    if (clientWithID.length== 0) {
-        return false
-    }
-    else
-    {
-        return true
-    }
+    const clientExists = tab.clients.some((client) => client.id == clientID)
+    return !clientExists
 }
 
-function siPlafondValid(plafond, MinPlafond = 50, MaxPlafond = 10000)
+
+function siPlafondValid(plafond_MAD, MinPlafond_MAD = 50, MaxPlafond_MAD = 10000)
 {
-    let plafond_toDecimal = parseFloat(plafond.replace(',', '.'))
-    if (Number.isNaN(plafond_toDecimal) || plafond_toDecimal < MinPlafond || plafond_toDecimal > MaxPlafond) {
+    let plafond_toDecimal = parseFloat((plafond_MAD.replace(',', '.'))).toFixed(2)
+    
+    if (Number.isNaN(plafond_toDecimal) || plafond_toDecimal < MinPlafond_MAD || plafond_toDecimal > MaxPlafond_MAD) {
         return false
     }
     return true
     
 }
-
 function siMontantValide(montant_MAD, minMontant_CEN=1, maxMontant_CEN=1000000 )
 {
     if (Number.isNaN(parseFloat(montant_MAD))) {
         return false;
     }
-    const montant_CEN =parseFloat(montant_MAD.replace(',', '.')) * 100
+    const montant_CEN =parseFloat(montant_MAD.replace(',', '.')).toFixed(2) * 100
     
     if (montant_CEN < minMontant_CEN || montant_CEN > maxMontant_CEN) {
         return false
@@ -83,15 +71,22 @@ function siMontantValide(montant_MAD, minMontant_CEN=1, maxMontant_CEN=1000000 )
         return true
     }
 }
-
 function siTypeValide(type)
 {
     return type == "achat" ? true : (type == "remboursement" ? true:false)
 }
 
-function siLibelleValide(libelle)
+function siLibelleValide(libelle, minLength=2, maxLength=60)
 {
-   return siNomEstValide(libelle, 2, 60)
+    const regex = /[^\p{L}0-9 -]/u
+    const cp_libelle= libelle.trim()
+    if (regex.test(cp_libelle) || cp_libelle.length > maxLength || cp_libelle.length < minLength) {
+        return false
+    }
+    else
+    {
+        return true;
+    }
 }
 
 function siDateValide(date_str)
@@ -110,11 +105,21 @@ function siDateValide(date_str)
     }
 }
 
-function isOperationIDUnique(Operatio_id)
+function siOperationIDUnique(Operatio_id, tab)
 {
-    const OperationWithID = demoTab.operations.filter((operation) => operation.id == Operatio_id)
-    if (OperationWithID.length != 0) {
-        return false
-    }
-    return true
+    const isOperationExists = tab.operations.some((operation) => operation.id == Operatio_id)
+    return !isOperationExists
 }
+
+
+
+export {siNomEstValide}
+export {siTelephoneValide}
+export {siClientIDUnique as isClientIDUnique}
+export {siPlafondValid}
+export {siMontantValide}
+export {siTypeValide}
+export {siLibelleValide}
+export {siDateValide}
+export {siOperationIDUnique}
+export {siNomUnique}
