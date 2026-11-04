@@ -1,5 +1,5 @@
 import { state } from "./state.js";
-import { calculateDisponibleCredit, convertMadToCen } from "./calculations.js";
+import { calculateSolde ,calculateDisponibleCredit, convertMadToCen } from "./calculations.js";
 
 function creerAchat({clientId, montant, libelle, date }) {
     const client = state.clients.find(
@@ -13,7 +13,7 @@ function creerAchat({clientId, montant, libelle, date }) {
     const disponibleCredit = calculateDisponibleCredit(client, state.operations);
 
     if (convertMadToCen(montant) > disponibleCredit) {
-        throw new Error("Crédit disponible insuffisant");
+        throw new Error("Le montant dépasse votre dette restante");
     }
 
     const newOperation = {
@@ -30,4 +30,36 @@ function creerAchat({clientId, montant, libelle, date }) {
     return newOperation;
 }
 
-export {creerAchat}
+function creerRemboursement({clientId, montant, libelle, date }) {
+
+    const client = state.clients.find(
+        client => client.id === clientId
+    );
+
+    if (!client) {
+        throw new Error("Client introuvable");
+    }
+
+    const soldeDebit = calculateSolde(state.operations, clientId);
+
+    const montantInCen = convertMadToCen(montant);
+
+    if (montantInCen > soldeDebit) {
+        throw new Error("Ce montant a dépassé votre solde de debit");
+    }
+
+    const newOperation = {
+        id: "o-" + crypto.randomUUID(),
+        clientId,
+        type: "remboursement",
+        montant: montantInCen,
+        libelle,
+        date
+    };
+
+    state.operations.push(newOperation);
+
+    return newOperation;
+}
+
+export {creerAchat, creerRemboursement}
