@@ -22,4 +22,10 @@ function calculateDisponibleCredit(client, operations) {
     return client.plafond - solde;
 }
 
-export {calculateSolde, calculateDisponibleCredit};
+function convertMadToCen(montant_MAD) {
+    const montant_CEN = parseFloat(montant_MAD.replace(',', '.')).toFixed(2) * 100;
+
+    return montant_CEN;
+}
+
+export { calculateSolde, calculateDisponibleCredit, convertMadToCen };
