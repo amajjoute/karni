@@ -160,5 +160,3 @@ resetButton.addEventListener("click", function() {
 // Affichage initial
 filtrerClients();
 }
-
-
