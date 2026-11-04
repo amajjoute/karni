@@ -2,7 +2,7 @@ import {creerDemo} from './demo.js';
 const demoTab = creerDemo()
 function siNomEstValide(nom, minLength=2, maxLength=40)
 {
-    const regex = /[^\p{L}0-9 -]/u
+    const regex = /[^\p{L} -]/u
     const cp_nom= nom.trim()
     if (regex.test(cp_nom) || cp_nom.length > maxLength || cp_nom.length < minLength) {
         return false
@@ -12,6 +12,13 @@ function siNomEstValide(nom, minLength=2, maxLength=40)
         return true;
     }
 }
+
+function siNomUnique(nom, tab)
+{
+    const NomUnique = tab.clients.some((client) => client.nom.toLowerCase() == nom.toLowerCase())
+    return !NomUnique   
+}
+
 
 function siTelephoneValide(tel)
 {
@@ -42,7 +49,6 @@ function siClientIDUnique(clientID, tab)
 function siPlafondValid(plafond_MAD, MinPlafond_MAD = 50, MaxPlafond_MAD = 10000)
 {
     let plafond_toDecimal = parseFloat((plafond_MAD.replace(',', '.'))).toFixed(2)
-    console.log(plafond_toDecimal);
     
     if (Number.isNaN(plafond_toDecimal) || plafond_toDecimal < MinPlafond_MAD || plafond_toDecimal > MaxPlafond_MAD) {
         return false
@@ -70,9 +76,17 @@ function siTypeValide(type)
     return type == "achat" ? true : (type == "remboursement" ? true:false)
 }
 
-function siLibelleValide(libelle)
+function siLibelleValide(libelle, minLength=2, maxLength=60)
 {
-   return siNomEstValide(libelle, 2, 60)
+    const regex = /[^\p{L}0-9 -]/u
+    const cp_libelle= libelle.trim()
+    if (regex.test(cp_libelle) || cp_libelle.length > maxLength || cp_libelle.length < minLength) {
+        return false
+    }
+    else
+    {
+        return true;
+    }
 }
 
 function siDateValide(date_str)
@@ -108,3 +122,4 @@ export {siTypeValide}
 export {siLibelleValide}
 export {siDateValide}
 export {siOperationIDUnique}
+export {siNomUnique}
