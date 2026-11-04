@@ -31,49 +31,31 @@ function siTelephoneValide(tel)
     }
 }
 
-function siMontantValid(montant)
-{
-    const cp_montant = montant.trim()
-    if (Number.isInteger(cp_montant)) {
-        return true
-    }
-    else
-    {
-        return false
-    }
-}
-
-function isClientIDExists(clientID)
+function siClientIDUnique(clientID, tab)
 {
     
-    const clientWithID = demoTab.clients.filter((client) => client.id == clientID)
-    console.log(clientWithID);
-    
-    if (clientWithID.length== 0) {
-        return false
-    }
-    else
-    {
-        return true
-    }
+    const clientExists = tab.clients.some((client) => client.id == clientID)
+    return !clientExists
 }
 
-function siPlafondValid(plafond, MinPlafond = 50, MaxPlafond = 10000)
+
+function siPlafondValid(plafond_MAD, MinPlafond_MAD = 50, MaxPlafond_MAD = 10000)
 {
-    let plafond_toDecimal = parseFloat(plafond.replace(',', '.'))
-    if (Number.isNaN(plafond_toDecimal) || plafond_toDecimal < MinPlafond || plafond_toDecimal > MaxPlafond) {
+    let plafond_toDecimal = parseFloat((plafond_MAD.replace(',', '.'))).toFixed(2)
+    console.log(plafond_toDecimal);
+    
+    if (Number.isNaN(plafond_toDecimal) || plafond_toDecimal < MinPlafond_MAD || plafond_toDecimal > MaxPlafond_MAD) {
         return false
     }
     return true
     
 }
-
 function siMontantValide(montant_MAD, minMontant_CEN=1, maxMontant_CEN=1000000 )
 {
     if (Number.isNaN(parseFloat(montant_MAD))) {
         return false;
     }
-    const montant_CEN =parseFloat(montant_MAD.replace(',', '.')) * 100
+    const montant_CEN =parseFloat(montant_MAD.replace(',', '.')).toFixed(2) * 100
     
     if (montant_CEN < minMontant_CEN || montant_CEN > maxMontant_CEN) {
         return false
@@ -83,7 +65,6 @@ function siMontantValide(montant_MAD, minMontant_CEN=1, maxMontant_CEN=1000000 )
         return true
     }
 }
-
 function siTypeValide(type)
 {
     return type == "achat" ? true : (type == "remboursement" ? true:false)
@@ -91,7 +72,7 @@ function siTypeValide(type)
 
 function siLibelleValide(libelle)
 {
-   return siNomEstValide(libelle)
+   return siNomEstValide(libelle, 2, 60)
 }
 
 function siDateValide(date_str)
@@ -110,34 +91,20 @@ function siDateValide(date_str)
     }
 }
 
-function isOperationIDUnique(Operatio_id)
+function siOperationIDUnique(Operatio_id, tab)
 {
-    const OperationWithID = demoTab.operations.filter((operation) => operation.id == Operatio_id)
-    if (OperationWithID.length != 0) {
-        return false
-    }
-    return true
+    const isOperationExists = tab.operations.some((operation) => operation.id == Operatio_id)
+    return !isOperationExists
 }
-console.log(siDateValide("2026-11-03"))
-console.log(siDateValide("2026-12-03"))
-console.log(siDateValide("2026-11-04"))
-console.log(siDateValide("2026-11-02"))
 
 
 
-
-
-
-
-// console.log(demoTab.clients);
-// console.log(isClientIDExists('c-demo-1'));
-// console.log(isClientIDExists('c-demo-100'));
-
-
-// console.log(siNomEstValide("&oussama200"));
-// console.log(siNomEstValide("o&ussama200"));
-// console.log(siNomEstValide("o"));
-// console.log(siNomEstValide("****"))
-// console.log(siNomEstValide("       "));
-// console.log(siNomEstValide("   ou  "));
-
+export {siNomEstValide}
+export {siTelephoneValide}
+export {siClientIDUnique as isClientIDUnique}
+export {siPlafondValid}
+export {siMontantValide}
+export {siTypeValide}
+export {siLibelleValide}
+export {siDateValide}
+export {siOperationIDUnique}
