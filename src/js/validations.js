@@ -104,6 +104,9 @@ function siTypeValide(type)
 
 function siLibelleValide(libelle, minLength=2, maxLength=60)
 {
+    if (libelle == "") {
+        return true
+    }
     const regex = /[^\p{L}0-9 -]/u
     const cp_libelle= libelle.trim()
     if (regex.test(cp_libelle) || cp_libelle.length > maxLength || cp_libelle.length < minLength) {
@@ -172,7 +175,7 @@ function siClientValid(obj, tab)
         siValide.valide = false
         siValide.errors_string +="plafond n'est pas valide.|"
     }
-    if (!siDateValide(obj.date)) {
+    if (!siDateValide(obj.creeLe)) {
         siValide.valide = false
         siValide.errors_string += "la date n'est pas valide|"
     }
@@ -242,143 +245,6 @@ function siDataSetValide(tab)
     }
     return obj
 }
-
-// const demoTab2 = {
-//     app: "karni",
-//     version: 1,
-//     exporteLe: "2026-11-04T10:30:00.000Z",
-
-//     clients: [
-//         {
-//             id: "c-001",
-//             nom: "Fatima Zahra Alaoui",
-//             telephone: "0612345678",
-//             plafond: 150000,
-//             date: "2026-10-01"
-//         },
-//         {
-//             id: "c-002",
-//             nom: "Fatima Zahra Alaoui",
-//             telephone: "0961234567",
-//             plafond: 80000,
-//             date: "2026-10-05"
-//         },
-//         {
-//             id: "c-003",
-//             nom: "Khadija Lahcen",
-//             telephone: "",
-//             plafond: 4999,
-//             date: "2026-10-10"
-//         },
-//         {
-//             id: "c-004",
-//             nom: "Omar El Idrissi",
-//             telephone: "0701020304",
-//             plafond: 30000,
-//             date: "2026-10-15"
-//         },
-//         {
-//             id: "c-005",
-//             nom: "Salma Ouazzani",
-//             telephone: "0522334455",
-//             plafond: 100000,
-//             date: "2026-10-20"
-//         }
-//     ],
-
-//     operations: [
-//         // Fatima
-//         {
-//             id: "o-001",
-//             clientId: "c-001",
-//             type: "achat",
-//             montant: 4550,
-//             libelle: "Lait et pain",
-//             date: "2026-10-22"
-//         },
-//         {
-//             id: "o-002",
-//             clientId: "c-001",
-//             type: "achat",
-//             montant: 5000,
-//             libelle: "Bonbonne de gaz",
-//             date: "2026-10-23"
-//         },
-//         {
-//             id: "o-003",
-//             clientId: "c-001",
-//             type: "remboursement",
-//             montant: 2000,
-//             libelle: "Paiement partiel",
-//             date: "2026-10-25"
-//         },
-
-//         // Youssef
-//         {
-//             id: "o-004",
-//             clientId: "c-002",
-//             type: "achat",
-//             montant: 3500,
-//             libelle: "Produits alimentaires",
-//             date: "2026-10-24"
-//         },
-//         {
-//             id: "o-005",
-//             clientId: "c-002",
-//             type: "remboursement",
-//             montant: 1500,
-//             libelle: "Remboursement",
-//             date: "2026-10-28"
-//         },
-
-//         // Khadija
-//         {
-//             id: "o-006",
-//             clientId: "c-003",
-//             type: "achat",
-//             montant: 7500,
-//             libelle: "Courses semaine",
-//             date: "2026-10-26"
-//         },
-
-//         // Omar
-//         {
-//             id: "o-007",
-//             clientId: "c-004",
-//             type: "achat",
-//             montant: 2500,
-//             libelle: "Pain et lait",
-//             date: "2026-10-27"
-//         },
-//         {
-//             id: "o-008",
-//             clientId: "c-004",
-//             type: "remboursement",
-//             montant: 2500,
-//             libelle: "Dette reglee",
-//             date: "2026-10-30"
-//         },
-
-//         // Salma
-//         {
-//             id: "o-009",
-//             clientId: "c-005",
-//             type: "achat",
-//             montant: 12000,
-//             libelle: "Produits menagers",
-//             date: "2026-10-29"
-//         },
-//         {
-//             id: "o-010",
-//             clientId: "c-005",
-//             type: "achat",
-//             montant: 3000,
-//             libelle: "Produits laitiers",
-//             date: "2026-11-01"
-//         }
-//     ]
-// };
-
 
 
 export {siNomEstValide}
