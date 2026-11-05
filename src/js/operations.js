@@ -45,7 +45,7 @@ function creerRemboursement({clientId, montant, libelle, date }) {
     const montantInCen = convertMadToCen(montant);
 
     if (montantInCen > soldeDebit) {
-        throw new Error("Ce montant a dépassé votre solde de debit");
+        throw new Error("un remboursement supérieur au solde est refusé.");
     }
 
     const newOperation = {
@@ -60,6 +60,19 @@ function creerRemboursement({clientId, montant, libelle, date }) {
     state.operations.push(newOperation);
 
     return newOperation;
+}
+
+function supprimerOperation({clientId, montant, libelle, date }) {
+    const client = state.clients.find(
+        client => client.id === clientId
+    );
+
+    if (!client) {
+        throw new Error("Client introuvable");
+    }
+
+    const removeClient = state.operations;
+
 }
 
 export {creerAchat, creerRemboursement}
