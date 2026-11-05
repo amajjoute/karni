@@ -62,17 +62,22 @@ function creerRemboursement({clientId, montant, libelle, date }) {
     return newOperation;
 }
 
-function supprimerOperation({clientId, montant, libelle, date }) {
-    const client = state.clients.find(
-        client => client.id === clientId
+function supprimerOperation(operationId) {
+    const check = state.operations.some(
+        op => op.id === operationId
     );
+    
+    if (check) {
+        const newStateOp = state.operations.filter(
+            op => op.id !== operationId
+        );
 
-    if (!client) {
-        throw new Error("Client introuvable");
+        state.operations = newStateOp;
+
+        return true;
+    } else {
+        return false;
     }
-
-    const removeClient = state.operations;
-
 }
 
-export {creerAchat, creerRemboursement}
+export {creerAchat, creerRemboursement, supprimerOperation};
