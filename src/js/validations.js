@@ -257,6 +257,3 @@ export {siLibelleValide}
 export {siDateValide}
 export {siOperationIDUnique}
 export {siNomUnique}
-export {siClientValid}
-export {siOperationValide}
-export {siDataSetValide}
