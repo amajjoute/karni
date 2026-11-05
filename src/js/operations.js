@@ -62,4 +62,4 @@ function creerRemboursement({clientId, montant, libelle, date }) {
     return newOperation;
 }
 
-export {creerAchat, creerRemboursement, supprimerOperation};
+export {creerAchat, creerRemboursement};
