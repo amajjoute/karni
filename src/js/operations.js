@@ -62,22 +62,4 @@ function creerRemboursement({clientId, montant, libelle, date }) {
     return newOperation;
 }
 
-function supprimerOperation(operationId) {
-    const check = state.operations.some(
-        op => op.id === operationId
-    );
-    
-    if (check) {
-        const newStateOp = state.operations.filter(
-            op => op.id !== operationId
-        );
-
-        state.operations = newStateOp;
-
-        return true;
-    } else {
-        return false;
-    }
-}
-
 export {creerAchat, creerRemboursement, supprimerOperation};
