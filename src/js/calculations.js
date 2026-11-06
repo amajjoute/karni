@@ -1,3 +1,5 @@
+import {state} from './state.js'
+
 function calculateSolde(operations, clientId) {
     return operations.reduce((solde, operation) => {
         if(operation.clientId !== clientId) {
@@ -26,6 +28,11 @@ function convertMadToCen(montant_MAD) {
     const montant_CEN = parseFloat(montant_MAD.replace(',', '.')).toFixed(2) * 100;
 
     return montant_CEN;
+}
+
+function convertCenToMad(montant_Cen) {
+    const montant_Mad = montant_Cen / 100;
+    return montant_Mad.toFixed(2);
 }
 
 function calculateStatut(client, operations) {
@@ -79,4 +86,22 @@ function calculateStatut(client, operations) {
     return status;
 }
 
-export { calculateSolde, calculateDisponibleCredit, convertMadToCen, calculateStatut };
+function calculateDashboardStats(clients, operations) {
+    const arrIds = [];
+
+    for (let i = 0; i < clients.length; i++) {
+        arrIds.push(clients[i].id);
+    }
+
+    const arrSoldes = [];
+
+    for (let i = 0; i < arrIds.length; i++) {
+        const solde = calculateSolde(operations, arrIds[i]);
+        arrSoldes.push(solde);
+    }
+
+    const total = arrSoldes.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+    return Number(convertCenToMad(total));
+}
+
+export { calculateSolde, calculateDisponibleCredit, convertMadToCen, calculateStatut, calculateDashboardStats };
