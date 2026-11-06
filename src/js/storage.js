@@ -121,9 +121,10 @@ function delete_client_storage(clientID)
         return true;
     }
 }
-function setData()
+function setData(data=state)
 {
-    localStorage.setItem('karni-v1', JSON.stringify(state))
+    localStorage.setItem('karni-v1', JSON.stringify(data))
+    saveData()
 }
 export function saveData(state) {
     try {

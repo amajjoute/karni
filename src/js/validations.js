@@ -1,6 +1,6 @@
 function siNomEstValide(nom, minLength=2, maxLength=40)
 {
-    const regex = /[^\p{L} -]/u
+    const regex = /[^\p{L}\p{M} '-’]/u;
     const cp_nom= nom.trim()
     if (regex.test(cp_nom) || cp_nom.length > maxLength || cp_nom.length < minLength) {
         return false
@@ -257,3 +257,4 @@ export {siOperationIDUnique}
 export {siNomUnique}
 export {siClientValid}
 export {siOperationValide}
+export {siDataSetValide}
