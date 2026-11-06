@@ -1,0 +1,143 @@
+import {setData, loadData, delete_client_storage} from './storage.js';
+import { lireFile } from './import-export.js';
+import { creerDemo } from './demo.js';
+
+const dialogConfirmation = document.getElementById("dialog-confirmation");
+
+const confirmationTitre = document.getElementById("confirmation-titre");
+const confirmationMessage = document.getElementById("confirmation-message");
+const confirmationDetails = document.getElementById("confirmation-details");
+const confirmationValider = document.getElementById("confirmation-valider");
+const confirmationAnnuler = document.getElementById("confirmation-annuler");
+
+const charger_demo = document.getElementById('charger-demo')
+const vider_carnet = document.getElementById('vider-carnet')
+
+
+charger_demo.addEventListener('click', ()=> {
+    const demoTab = creerDemo()
+    demanderConfirmation({titre: 'Confirm demo',message: ''}, function(confirm) {
+        if (!confirm) {
+            return
+        }
+        setData(demoTab)
+    })
+})
+vider_carnet.addEventListener('click', ()=>{
+    demanderConfirmation({titre: 'confirmer vider carnet', message: ''}, function(confirm)
+{
+    if (!confirm) {
+        return
+    }
+    setData({"app": "karni",
+        "version": 1,
+        clients: [],
+        operations: [],})
+})
+})
+let apresConfirmation = null;
+
+dialogConfirmation.addEventListener("close", function() {
+    const confirme = dialogConfirmation.returnValue === "valider";
+
+    if (apresConfirmation) {
+        const callback = apresConfirmation;
+        apresConfirmation = null;
+
+        callback(confirme);
+    }
+});
+
+function demanderConfirmation(
+    { titre, message, details = [], confirmerAutorise = true },
+    callback
+) {
+    confirmationTitre.textContent = titre;
+    confirmationMessage.textContent = message;
+
+    confirmationDetails.replaceChildren();
+
+    details.forEach(function(detail) {
+        const li = document.createElement("li");
+        li.textContent = detail;
+        confirmationDetails.appendChild(li);
+    });
+
+    // Enable or disable the Confirm button
+    confirmationValider.disabled = !confirmerAutorise;
+
+    // Change Cancel to Close when confirmation isn't allowed
+    confirmationAnnuler.textContent = confirmerAutorise
+        ? "Annuler"
+        : "Fermer";
+
+    apresConfirmation = callback;
+
+    dialogConfirmation.returnValue = "";
+    dialogConfirmation.showModal();
+}
+
+const inputFile = document.getElementById('import-fichier')
+inputFile.classList.remove('hidden')
+inputFile.addEventListener('change', (event) => {
+    const file = event.target.files[0]
+    lireFile(file, function(resultat, importedData) {
+    if (resultat.valide) {
+
+        demanderConfirmation({
+         titre: "Confirmer l'importation",
+         message: `Ce fichier contient ${importedData.clients.length} clients et ${importedData.operations.length} opérations. Il remplacera les données actuelles.`
+    }, function(confirme) {
+
+        if (!confirme) {
+            console.log("Importation annulée");
+            return;
+        }
+
+        // Replace the current dataset
+        setData(importedData);
+
+        // Refresh the interface
+        // Call your rendering function here
+    });
+
+}
+    else
+    {
+        const detailsClients = resultat.clients_erreurs.flatMap(function(clientErreur) {
+    const messages = Array.isArray(clientErreur.errors_messages)
+        ? clientErreur.errors_messages
+        : [clientErreur.errors_messages];
+
+    return messages.map(function(message) {
+        return `Client ${clientErreur.clientID}: ${message}`;
+    });
+});
+
+const detailsOperations = resultat.operations_erreurs.flatMap(function(operationErreur) {
+    const messages = Array.isArray(operationErreur.errors_messages)
+        ? operationErreur.errors_messages
+        : [operationErreur.errors_messages];
+
+    return messages.map(function(message) {
+        return `Opération ${operationErreur.operationID}: ${message}`;
+    });
+});
+
+const details = [...detailsClients, ...detailsOperations];
+
+    demanderConfirmation({
+        titre: "Importation impossible",
+        message: "Le fichier contient des erreurs. Corrigez-les avant de réessayer.",
+        details: details.slice(0, 10),
+        confirmerAutorise: false
+    }, function() {
+        // No action: the imported data is invalid.
+    });
+
+    return;
+    }
+
+    
+    })
+})
