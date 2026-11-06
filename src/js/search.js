@@ -1,9 +1,10 @@
-
 import { state } from "./state.js";
-import { calculateSolde } from "./calculations.js";
+import { calculateSolde, calculateStatut } from "./calculations.js";
+
 
 export function initSearch() {
 
+    const state = state();
     const clients = state.clients;
     const operations = state.operations;
 
@@ -17,6 +18,8 @@ export function initSearch() {
 
     const listeClients = document.querySelector("#liste-clients");
     const modeleClient = document.querySelector("#modele-client");
+
+
 
     const tri = document.querySelector("#tri")
 
@@ -53,7 +56,18 @@ export function initSearch() {
 
             const clone = modeleClient.content.cloneNode(true);
 
-            clone.querySelector(".client-nom").textContent = client.nom;
+            clone.querySelector("li").dataset.clientId = client.id;
+
+            clone.querySelector(".client-nom").textContent = client.nom
+
+            clone.querySelector(".client-solde").textContent =
+            calculateSolde(operations, client.id) + " DH"
+
+            // statut client
+            
+            const badges = clone.querySelector(".client-badges")
+
+            badges.textContent = calculateStatut(client, operations);
 
             listeClients.appendChild(clone);
         });
@@ -64,84 +78,86 @@ export function initSearch() {
 
     function filtrerClients() {
 
-        const recherche = normalizeText(searchInput.value);
+    const recherche = normalizeText(searchInput.value);
 
-        let resultat = clients.filter(client =>
-            normalizeText(client.nom).startsWith(recherche)
+    let resultat = clients.filter(client =>
+        normalizeText(client.nom).startsWith(recherche)
+    );
+
+
+
+    //  filtrer par statut------------------
+
+    if (filtre.value === "en-dette") {
+
+        resultat = resultat.filter(client =>
+            calculateStatut(client, operations) === "En dette"
         );
 
-        if (filtre.value === "en-dette") {
+    } else if (filtre.value === "a-jour") {
 
-            resultat = resultat.filter(client =>
-                calculateSolde(operations, client.id) > 0 &&
-                operations.some(operation =>
-                    operation.clientId === client.id &&
-                    operation.type === "achat" &&
-                    (new Date() - new Date(operation.date)) / 86400000 <= 30
-                )
-            );
+        resultat = resultat.filter(client =>
+            calculateStatut(client, operations) === "À jour"
+        );
 
-        } else if (filtre.value === "a-jour") {
+    } else if (filtre.value === "en-retard") {
 
-            resultat = resultat.filter(client =>
-                calculateSolde(operations, client.id) === 0
-            );
+        resultat = resultat.filter(client =>
+            calculateStatut(client, operations) === "En retard"
+        );
 
-        } else if (filtre.value === "en-retard") {
+    } else if (filtre.value === "plafond-atteint") {
 
-            resultat = resultat.filter(client =>
-                calculateSolde(operations, client.id) > 0 &&
-                operations.some(operation =>
-                    operation.clientId === client.id &&
-                    operation.type === "achat" &&
-                    (new Date() - new Date(operation.date)) / 86400000 > 30
-                )
-            );
-        }
+        resultat = resultat.filter(client =>
+            calculateStatut(client, operations) === "Plafond atteint"
+        );
+    }
 
-        afficherClients(resultat);
+    // tri ------------------------
 
+    if (tri.value === "nom") {
+    resultat.sort((a, b) => a.nom.localeCompare(b.nom));
+    } else if (tri.value === "solde") {
+        resultat.sort((a, b) =>
+            calculateSolde(operations, b.id) -
+            calculateSolde(operations, a.id)
+        );
 
-        // -------- SORT --------
+    }else if (tri.value === "recent") {
 
-        if (tri.value === "nom") {
+    const clientsAvecDate = [];
 
-            resultat.sort((a, b) =>
-                a.nom.localeCompare(b.nom)
-            );
+   
+    resultat.forEach(client => {
 
-        } else if (tri.value === "solde") {
+        const operationsClient = operations.filter(
+            operation => operation.clientId === client.id
+        )
 
-            resultat.sort((a, b) =>
-                calculateSolde(operations, b.id) -
-                calculateSolde(operations, a.id)
-            );
+        operationsClient.sort((a, b) =>
+            new Date(b.date) - new Date(a.date)
+        );
 
-        } else if (tri.value === "recent") {
+    
+        const derniereOperation = operationsClient[0];
 
-            resultat.sort((a, b) => {
-
-                const operationA = operations
-                    .filter(operation => operation.clientId === a.id)
-                    .sort((x, y) =>
-                        new Date(y.date) - new Date(x.date)
-                    )[0];
-
-                const operationB = operations
-                    .filter(operation => operation.clientId === b.id)
-                    .sort((x, y) =>
-                        new Date(y.date) - new Date(x.date)
-                    )[0];
-
-                const dateA = operationA ? new Date(operationA.date) : 0;
-                const dateB = operationB ? new Date(operationB.date) : 0;
-
-                return dateB - dateA;
+        if (derniereOperation) {
+            clientsAvecDate.push({
+                client: client,
+                date: derniereOperation.date
             });
         }
+    });
 
-        afficherClients(resultat);
-    }
+  
+    clientsAvecDate.sort((a, b) =>
+        new Date(b.date) - new Date(a.date)
+    );
+
+    resultat = clientsAvecDate.map(element => element.client);
+}
+   afficherClients(resultat); 
+} 
 
 // -------- EVENTS --------
 
