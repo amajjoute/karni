@@ -29,44 +29,54 @@ function convertMadToCen(montant_MAD) {
 }
 
 function calculateStatut(client, operations) {
-
     const solde = calculateSolde(operations, client.id);
+    const status = [];
 
     if (solde === 0) {
-        return "À jour";
+        return ["À jour"];
     }
 
-    if (solde >= client.plafond) {
-        return "Plafond atteint";
+    const disponibleCredit = calculateDisponibleCredit(client, operations);
+
+    if (disponibleCredit <= 0) {
+        status.push("Plafond atteint");
     }
 
     const clientOperation = operations.filter(
         operation => operation.clientId === client.id
     );
 
+    clientOperation.sort((a, b) =>
+        new Date(a.date) - new Date(b.date)
+    );
+
     const firstPurchase = clientOperation.find(
-        purchase => purchase.type === "achat"
-    )
+        operation => operation.type === "achat"
+    );
 
     const lastRepayment = clientOperation.findLast(
-        repayment => repayment.type === "remboursement"
+        operation => operation.type === "remboursement"
     );
+
     const referenceOperation = lastRepayment || firstPurchase;
-    let dayPassed;
 
     if (!referenceOperation) {
-        return false;
-    } else {
-        dayPassed = Math.floor(
-            (new Date() - new Date(referenceOperation.date)) / 
-            (24 * 60 * 60 * 1000))
+        status.push("En dette");
+        return status;
     }
 
+    const dayPassed = Math.floor(
+        (new Date() - new Date(referenceOperation.date)) /
+        (24 * 60 * 60 * 1000)
+    );
+
     if (dayPassed > 30) {
-        return "En retard"
+        status.push("En retard");
     } else {
-        return false
+        status.push("En dette");
     }
+
+    return status;
 }
 
 export { calculateSolde, calculateDisponibleCredit, convertMadToCen, calculateStatut };
