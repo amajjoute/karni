@@ -1,5 +1,3 @@
-import {creerDemo} from './demo.js';
-const demoTab = creerDemo()
 function siNomEstValide(nom, minLength=2, maxLength=40)
 {
     const regex = /[^\p{L} -]/u
@@ -257,3 +255,5 @@ export {siLibelleValide}
 export {siDateValide}
 export {siOperationIDUnique}
 export {siNomUnique}
+export {siClientValid}
+export {siOperationValide}

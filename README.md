@@ -107,4 +107,3 @@ _À compléter : liens vers vos issues de bug._
 ## Captures d'écran
 
 _À compléter : mobile et desktop._
-
