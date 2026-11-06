@@ -28,4 +28,45 @@ function convertMadToCen(montant_MAD) {
     return montant_CEN;
 }
 
-export { calculateSolde, calculateDisponibleCredit, convertMadToCen };
+function calculateStatut(client, operations) {
+
+    const solde = calculateSolde(operations, client.id);
+
+    if (solde === 0) {
+        return "À jour";
+    }
+
+    if (solde >= client.plafond) {
+        return "Plafond atteint";
+    }
+
+    const clientOperation = operations.filter(
+        operation => operation.clientId === client.id
+    );
+
+    const firstPurchase = clientOperation.find(
+        purchase => purchase.type === "achat"
+    )
+
+    const lastRepayment = clientOperation.findLast(
+        repayment => repayment.type === "remboursement"
+    );
+    const referenceOperation = lastRepayment || firstPurchase;
+    let dayPassed;
+
+    if (!referenceOperation) {
+        return false;
+    } else {
+        dayPassed = Math.floor(
+            (new Date() - new Date(referenceOperation.date)) / 
+            (24 * 60 * 60 * 1000))
+    }
+
+    if (dayPassed > 30) {
+        return "En retard"
+    } else {
+        return false
+    }
+}
+
+export { calculateSolde, calculateDisponibleCredit, convertMadToCen, calculateStatut };
