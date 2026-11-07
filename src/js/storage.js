@@ -4,9 +4,13 @@ import {siClientValid, siOperationValide} from "./validations.js"
 
 function loadData()
 {
-    let data = JSON.parse(localStorage.getItem('karni-v1'))
+    let data = JSON.parse(localStorage.getItem('karni-v1')) || []
+    if (data == []) {
+        return
+    }
     state.version = data.version
     state.app = data.app
+    state.exporteLe = data.exporteLe
     state.clients = data.clients
     state.operations = data.operations
     
@@ -75,7 +79,7 @@ function deleteOperation_storage(operationID)
 
         state.operations = newStateOp;
 
-        return true;
+        return saveData(state);
     } else {
         return false;
     }
@@ -118,26 +122,30 @@ function delete_client_storage(clientID)
         
         state.clients = state.clients.filter((client) => client.id != clientID)
         delete_client_operations_storage(clientID)
-        return true;
+        return saveData(state);
     }
 }
 function setData(data=state)
 {
     localStorage.setItem('karni-v1', JSON.stringify(data))
-    saveData()
 }
-export function saveData(state) {
+export function saveData(data) {
+    console.log("hello from save data");
+    console.log(data);
+    
     try {
-        const data = JSON.stringify(state);
-
-        localStorage.setItem("karni:v1", data);
-
+        setData(data)
+        loadData()
+        console.log(state);
+        
         return {
             success: true,
             error: null
         };
 
     } catch (error) {
+        console.log(error);
+        
         return {
             success: false,
             error: error.message
