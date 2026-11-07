@@ -2,7 +2,7 @@ const state = {
     app: "karni",
     version: 1,
     clients: [],
-    operations: []
+  operations: []
 };
 
 export { state };

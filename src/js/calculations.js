@@ -28,45 +28,106 @@ function convertMadToCen(montant_MAD) {
     return montant_CEN;
 }
 
-function calculateStatut(client, operations) {
+function convertCenToMad(montant_Cen) {
+    const montant_Mad = montant_Cen / 100;
+    return montant_Mad.toFixed(2);
+}
 
+function calculateStatut(client, operations, today) {
     const solde = calculateSolde(operations, client.id);
+    const status = [];
 
     if (solde === 0) {
-        return "À jour";
+        return ["À jour"];
     }
 
-    if (solde >= client.plafond) {
-        return "Plafond atteint";
+    const disponibleCredit = calculateDisponibleCredit(client, operations);
+
+    if (disponibleCredit <= 0) {
+        status.push("Plafond atteint");
     }
 
     const clientOperation = operations.filter(
         operation => operation.clientId === client.id
     );
 
+    clientOperation.sort((a, b) =>
+        new Date(a.date) - new Date(b.date)
+    );
+
     const firstPurchase = clientOperation.find(
-        purchase => purchase.type === "achat"
-    )
+        operation => operation.type === "achat"
+    );
 
     const lastRepayment = clientOperation.findLast(
-        repayment => repayment.type === "remboursement"
+        operation => operation.type === "remboursement"
     );
+
     const referenceOperation = lastRepayment || firstPurchase;
-    let dayPassed;
 
     if (!referenceOperation) {
-        return false;
-    } else {
-        dayPassed = Math.floor(
-            (new Date() - new Date(referenceOperation.date)) / 
-            (24 * 60 * 60 * 1000))
+        status.push("En dette");
+        return status;
     }
+
+    const dayPassed = Math.floor(
+        (new Date(today) - new Date(referenceOperation.date)) /
+        (24 * 60 * 60 * 1000)
+    );
 
     if (dayPassed > 30) {
-        return "En retard"
+        status.push("En retard");
     } else {
-        return false
+        status.push("En dette");
     }
+
+    return status;
 }
 
-export { calculateSolde, calculateDisponibleCredit, convertMadToCen, calculateStatut };
+function calculateDashboardStats(clients, operations, today) {
+    const arrIds = [];
+
+    for (let i = 0; i < clients.length; i++) {
+        arrIds.push(clients[i].id);
+    }
+
+    const arrSoldes = [];
+
+    for (let i = 0; i < arrIds.length; i++) {
+        const solde = calculateSolde(operations, arrIds[i]);
+        arrSoldes.push(solde);
+    }
+
+    const total = arrSoldes.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+    const totalOwed = Number(convertCenToMad(total));
+
+    const totalClients = clients.length;
+
+    const clientsInDebtLength = arrSoldes.filter(
+            solde => solde > 0
+    );
+
+    const clientsInDebt = clientsInDebtLength.length;
+
+    const clientsRetardLength = [];
+    for (let i = 0; i < arrIds.length; i++) {
+        const clientsRetard = calculateStatut(clients[i], operations, today).filter(
+            client => client === "En retard"
+        );
+
+        if (clientsRetard.includes("En retard") === true) {
+            clientsRetardLength.push(clientsRetard);
+        }
+    }
+
+    const clientsEnRetard = clientsRetardLength.length;
+
+    return {
+        totalOwed,
+        totalClients,
+        clientsInDebt,
+        clientsEnRetard
+    };
+}
+
+export { calculateSolde, calculateDisponibleCredit, convertMadToCen, calculateStatut, calculateDashboardStats };
