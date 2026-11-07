@@ -1,5 +1,3 @@
-import {state} from './state.js'
-
 function calculateSolde(operations, clientId) {
     return operations.reduce((solde, operation) => {
         if(operation.clientId !== clientId) {
@@ -35,7 +33,7 @@ function convertCenToMad(montant_Cen) {
     return montant_Mad.toFixed(2);
 }
 
-function calculateStatut(client, operations) {
+function calculateStatut(client, operations, today) {
     const solde = calculateSolde(operations, client.id);
     const status = [];
 
@@ -73,7 +71,7 @@ function calculateStatut(client, operations) {
     }
 
     const dayPassed = Math.floor(
-        (new Date() - new Date(referenceOperation.date)) /
+        (new Date(today) - new Date(referenceOperation.date)) /
         (24 * 60 * 60 * 1000)
     );
 
@@ -86,7 +84,7 @@ function calculateStatut(client, operations) {
     return status;
 }
 
-function calculateDashboardStats(clients, operations) {
+function calculateDashboardStats(clients, operations, today) {
     const arrIds = [];
 
     for (let i = 0; i < clients.length; i++) {
@@ -101,7 +99,35 @@ function calculateDashboardStats(clients, operations) {
     }
 
     const total = arrSoldes.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-    return Number(convertCenToMad(total));
+    const totalOwed = Number(convertCenToMad(total));
+
+    const totalClients = clients.length;
+
+    const clientsInDebtLength = arrSoldes.filter(
+            solde => solde > 0
+    );
+
+    const clientsInDebt = clientsInDebtLength.length;
+
+    const clientsRetardLength = [];
+    for (let i = 0; i < arrIds.length; i++) {
+        const clientsRetard = calculateStatut(clients[i], operations, today).filter(
+            client => client === "En retard"
+        );
+
+        if (clientsRetard.includes("En retard") === true) {
+            clientsRetardLength.push(clientsRetard);
+        }
+    }
+
+    const clientsEnRetard = clientsRetardLength.length;
+
+    return {
+        totalOwed,
+        totalClients,
+        clientsInDebt,
+        clientsEnRetard
+    };
 }
 
 export { calculateSolde, calculateDisponibleCredit, convertMadToCen, calculateStatut, calculateDashboardStats };

@@ -15,13 +15,6 @@ const state = {
     { id: "c-demo-4", nom: "Omar El Idrissi", telephone: "0701020304", plafond: 30000, creeLe: ilYa(20) },
     { id: "c-demo-5", nom: "Salma Ouazzani", telephone: "0522334455", plafond: 100000, creeLe: ilYa(90) },
     { id: "c-demo-6", nom: "Rachid Bennani", telephone: "", plafond: 200000, creeLe: ilYa(15) },],
-    operations: [{ id: "c-demo-1", nom: "Fatima Zahra Alaoui", telephone: "0612345678", plafond: 150000, creeLe: ilYa(60) },
-    { id: "c-demo-2", nom: "Youssef Benali", telephone: "0661234567", plafond: 80000, creeLe: ilYa(50) },
-    { id: "c-demo-3", nom: "Khadija Aït Lahcen", telephone: "", plafond: 50000, creeLe: ilYa(30) },
-    { id: "c-demo-4", nom: "Omar El Idrissi", telephone: "0701020304", plafond: 30000, creeLe: ilYa(20) },
-    { id: "c-demo-5", nom: "Salma Ouazzani", telephone: "0522334455", plafond: 100000, creeLe: ilYa(90) },
-    { id: "c-demo-6", nom: "Rachid Bennani", telephone: "", plafond: 200000, creeLe: ilYa(15) },
-  ],
   operations: [
     // Fatima : en dette, achats récents (solde 128,25 MAD).
     { id: "o-demo-1", clientId: "c-demo-1", type: "achat", montant: 4550, libelle: "Lait, pain, œufs", date: ilYa(3) },
@@ -37,13 +30,13 @@ const state = {
     { id: "o-demo-7", clientId: "c-demo-3", type: "remboursement", montant: 8000, libelle: "", date: ilYa(5) },
 
     // Omar : plafond atteint (solde 300,00 MAD = plafond).
-    { id: "o-demo-8", clientId: "c-demo-4", type: "achat", montant: 18000, libelle: "Courses", date: ilYa(12) },
-    { id: "o-demo-9", clientId: "c-demo-4", type: "achat", montant: 12000, libelle: "Couches, lait infantile", date: ilYa(6) },
+    { id: "o-demo-8", clientId: "c-demo-4", type: "achat", montant: 0, libelle: "Courses", date: ilYa(12) },
+    { id: "o-demo-9", clientId: "c-demo-4", type: "achat", montant: 0, libelle: "Couches, lait infantile", date: ilYa(6) },
 
     // Salma : en retard, dernier remboursement il y a 40 jours (solde 349,90 MAD).
-    { id: "o-demo-10", clientId: "c-demo-5", type: "achat", montant: 40000, libelle: "Courses du mois", date: ilYa(70) },
-    { id: "o-demo-11", clientId: "c-demo-5", type: "remboursement", montant: 15000, libelle: "Acompte", date: ilYa(40) },
-    { id: "o-demo-12", clientId: "c-demo-5", type: "achat", montant: 9990, libelle: "Produits ménagers", date: ilYa(35) },
+    { id: "o-demo-10", clientId: "c-demo-5", type: "achat", montant: 0, libelle: "Courses du mois", date: ilYa(70) },
+    { id: "o-demo-11", clientId: "c-demo-5", type: "remboursement", montant: 0, libelle: "Acompte", date: ilYa(40) },
+    { id: "o-demo-12", clientId: "c-demo-5", type: "achat", montant: 0, libelle: "Produits ménagers", date: ilYa(35) },
 
     // Rachid : en dette (solde 19,99 MAD).
     { id: "o-demo-13", clientId: "c-demo-6", type: "achat", montant: 1999, libelle: "Lessive", date: ilYa(8) },
