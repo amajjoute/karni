@@ -1,6 +1,9 @@
-import {setData, loadData, delete_client_storage} from './storage.js';
+import {loadData ,saveData} from './storage.js';
 import { lireFile } from './import-export.js';
 import { creerDemo } from './demo.js';
+import { exportkarniData } from './import-export.js';
+
+loadData()
 
 const dialogConfirmation = document.getElementById("dialog-confirmation");
 
@@ -10,26 +13,29 @@ const confirmationDetails = document.getElementById("confirmation-details");
 const confirmationValider = document.getElementById("confirmation-valider");
 const confirmationAnnuler = document.getElementById("confirmation-annuler");
 
+//export
+const export_btn = document.getElementById('exporter')
+export_btn.addEventListener('click', exportkarniData)
+
+//demo
 const charger_demo = document.getElementById('charger-demo')
 const vider_carnet = document.getElementById('vider-carnet')
-
-
 charger_demo.addEventListener('click', ()=> {
     const demoTab = creerDemo()
-    demanderConfirmation({titre: 'Confirm demo',message: ''}, function(confirm) {
+    demanderConfirmation({titre: 'Charger les données de démonstration ?',message: 'Cette action remplacera toutes les données actuelles de votre carnet par des données de démonstration. Vos clients et leurs opérations actuels seront supprimés.\n Voulez-vous continuer ?'}, function(confirm) {
         if (!confirm) {
             return
         }
-        setData(demoTab)
+        saveData(demoTab)
     })
 })
 vider_carnet.addEventListener('click', ()=>{
-    demanderConfirmation({titre: 'confirmer vider carnet', message: ''}, function(confirm)
+    demanderConfirmation({titre: 'Vider le carnet ?', message: 'Êtes-vous sûr de vouloir vider votre carnet ? Cette action supprimera définitivement tous vos clients et toutes leurs opérations enregistrées. \nCette action est irréversible.'}, function(confirm)
 {
     if (!confirm) {
         return
     }
-    setData({"app": "karni",
+    saveData({"app": "karni",
         "version": 1,
         clients: [],
         operations: [],})
@@ -76,9 +82,13 @@ function demanderConfirmation(
     dialogConfirmation.returnValue = "";
     dialogConfirmation.showModal();
 }
-
+//import
 const inputFile = document.getElementById('import-fichier')
-inputFile.classList.remove('hidden')
+const importer_btn = document.getElementById('importer')
+importer_btn.addEventListener('click', () => 
+{
+    inputFile.classList.remove('hidden')
+})
 inputFile.addEventListener('change', (event) => {
     const file = event.target.files[0]
     lireFile(file, function(resultat, importedData) {
@@ -95,8 +105,8 @@ inputFile.addEventListener('change', (event) => {
         }
 
         // Replace the current dataset
-        setData(importedData);
-
+        saveData(importedData);
+        
         // Refresh the interface
         // Call your rendering function here
     });
