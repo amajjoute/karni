@@ -155,29 +155,29 @@ function siClientValid(obj, tab)
     }
     if (!siClientIDUnique(obj.id, tab)) {
         siValide.valide = false
-        siValide.errors_string +="clientID n'est pas unique|"
+        siValide.errors_string +="clientID n'est pas unique, "
     }
     if (!siNomEstValide(obj.nom)) {
         siValide.valide = false
-        siValide.errors_string +="Client nom n'est pas valide|"
+        siValide.errors_string +="Client nom n'est pas valide, "
     }
     if (!siNomUnique(obj.nom, tab)) {
         siValide.valide = false
-        siValide.errors_string +="client nom deja existe.|"
+        siValide.errors_string +="client nom deja existe, "
     }
     if (!siTelephoneValide(obj.telephone)) {
         siValide.valide = false
-        siValide.errors_string += "client telephone n'est pas valide.|"
+        siValide.errors_string += "client telephone n'est pas valide, "
     }
     if (!siPlafondValid_CEN(obj.plafond)) {
         siValide.valide = false
-        siValide.errors_string +="plafond n'est pas valide.|"
+        siValide.errors_string +="plafond n'est pas valide, "
     }
     if (!siDateValide(obj.creeLe)) {
         siValide.valide = false
-        siValide.errors_string += "la date n'est pas valide|"
+        siValide.errors_string += "la date n'est pas valide, "
     }
-    siValide.errors_string = siValide.errors_string.slice(0, siValide.errors_string.length - 1)
+    siValide.errors_string = siValide.errors_string == "" ? "" : obj.id + ": " + siValide.errors_string.slice(0, siValide.errors_string.length - 2)
     return siValide
 }
 function siOperationValide(obj, tab)
@@ -188,21 +188,21 @@ function siOperationValide(obj, tab)
     }
     if (!siOperationIDUnique(obj.id, tab)) {
         isValide.valide = false
-        isValide.errors_string +="L'operation id deja existe.|"
+        isValide.errors_string +="L'operation id deja existe, "
     }if (!siClientExiste_ID(obj.clientId, tab)) {
         isValide.valide = false
-        isValide.errors_string +="Le client n'existe pas|"
+        isValide.errors_string +="Le client n'existe pas, "
     }if (!siTypeValide(obj.type)) {
         isValide.valide = false
-        isValide.errors_string +="le type n est pas valide|"
+        isValide.errors_string +="le type n est pas valide, "
     }if (!siMontantValide_CEN(obj.montant)) {
         isValide.valide = false
-        isValide.errors_string+= "le montant n'est pas valide|"
+        isValide.errors_string+= "le montant n'est pas valide, "
     }if (!siGroupeLibellesValide(obj.libelle)) {
         isValide.valide = false
-        isValide.errors_string+="libelle champs n'est pas valide|"
+        isValide.errors_string+="libelle champs n'est pas valide, "
     }
-    isValide.errors_string = isValide.errors_string.slice(0, isValide.errors_string.length - 1)
+    isValide.errors_string = isValide.errors_string == "" ? "" : obj.id + ": " + isValide.errors_string.slice(0, isValide.errors_string.length - 2) + "."
     return isValide
 }
 
@@ -210,8 +210,7 @@ function siDataSetValide(tab)
 {
     const obj = {
         valide: true,
-        clients_erreurs: [],
-        operations_erreurs: [],
+        errors: [],
         valideDataSet : {
         clients: [],
         operations: [],
@@ -222,7 +221,7 @@ function siDataSetValide(tab)
         const client_isValide_obj = siClientValid(client, obj.valideDataSet)
         if (client_isValide_obj.valide == false) {
             obj.valide = false
-            obj.clients_erreurs.push({clientID: client.id, errors_messages: client_isValide_obj.errors_string})
+            obj.errors.push(client_isValide_obj.errors_string)
         }
         else
         {
@@ -234,13 +233,16 @@ function siDataSetValide(tab)
         let operation_isValide_obj = siOperationValide(operation, obj.valideDataSet)
         if (operation_isValide_obj.valide == false) {
             obj.valide = false
-            obj.operations_erreurs.push({operationID: operation.id, errors_messages: operation_isValide_obj.errors_string})
+            obj.errors.push(operation_isValide_obj.errors_string)
         }
         else 
         {
             obj.valideDataSet.operations.push(operation)
         }
     }
+    console.log(obj.errors);
+
+    
     return obj
 }
 
