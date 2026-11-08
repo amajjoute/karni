@@ -117,11 +117,9 @@ clientEnregistrer.addEventListener("click", function(event) {
             plafond: convertMadToCen(plafond_client.value),
             creeLe: new Date().setHours(0,0,0, 0)
         }
-        console.log(newClient)
         clients.push(newClient)
         afficherClients();
         dialogClient.close();
-        console.log(clients);
         
     } else {
     const client = clients.find(c => c.id === clientId.value);
@@ -132,7 +130,6 @@ clientEnregistrer.addEventListener("click", function(event) {
 
     afficherClients();
     dialogClient.close();
-    console.log(clients)}
 })
 
 
@@ -160,7 +157,7 @@ listeClients.addEventListener("click", function(event) {
         const id = clientElement.dataset.clientId
 
 
-        
+
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         const client = clients.find(
