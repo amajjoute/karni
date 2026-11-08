@@ -114,32 +114,11 @@ inputFile.addEventListener('change', (event) => {
 }
     else
     {
-        const detailsClients = resultat.clients_erreurs.flatMap(function(clientErreur) {
-    const messages = Array.isArray(clientErreur.errors_messages)
-        ? clientErreur.errors_messages
-        : [clientErreur.errors_messages];
-
-    return messages.map(function(message) {
-        return `Client ${clientErreur.clientID}: ${message}`;
-    });
-});
-
-const detailsOperations = resultat.operations_erreurs.flatMap(function(operationErreur) {
-    const messages = Array.isArray(operationErreur.errors_messages)
-        ? operationErreur.errors_messages
-        : [operationErreur.errors_messages];
-
-    return messages.map(function(message) {
-        return `Opération ${operationErreur.operationID}: ${message}`;
-    });
-});
-
-const details = [...detailsClients, ...detailsOperations];
 
     demanderConfirmation({
         titre: "Importation impossible",
         message: "Le fichier contient des erreurs. Corrigez-les avant de réessayer.",
-        details: details.slice(0, 10),
+        details: resultat.errors,
         confirmerAutorise: false
     }, function() {
         // No action: the imported data is invalid.

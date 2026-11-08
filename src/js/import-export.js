@@ -12,9 +12,9 @@ function lireFile(file, callback)
        } catch (error) {
         callback({
             valide: false,
-            errors: {
-                msg: "Impossible de lire le fichier JSON."
-            }
+            errors: [
+                "Impossible de lire le fichier JSON."
+            ]
         }, null)
        }
         
@@ -23,7 +23,7 @@ function lireFile(file, callback)
         callback({
             valide: false,
             errors: 
-            {msg: "Un erreur pendant la lecture du fichier",}
+            ["Un erreur pendant la lecture du fichier"]
         }, null)
         
     }
