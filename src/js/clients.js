@@ -10,22 +10,10 @@ siPlafondValid
 
     import { addClient_storage } from "./storage.js"
     import { delete_client_storage } from "./storage.js";
-    
     import { convertMadToCen } from "./calculations.js";
-    import { creerDemo } from "./demo.js"
-
-// const demoTab = creerDemo()
-// const clients = demoTab.clients
-
-import { state } from "./state.js";
-
-const demoTab = creerDemo();
-
-state.clients = demoTab.clients;
-state.operations = demoTab.operations;
+    import { state } from "./state.js";
 
 const clients = state.clients;
-// --------------------------------
 
 const Nom_client = document.getElementById("client-nom")
 const Nom_client_error = document.getElementById("client-nom-erreur")
@@ -169,11 +157,11 @@ listeClients.addEventListener("click", function(event) {
     if (event.target.dataset.action === "modifier-client") {
 
         const clientElement = event.target.closest("[data-client-id]");
-        const id = clientElement.dataset.clientId;
+        const id = clientElement.dataset.clientId
+
+
+        
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        // const client = demoTab.clients.find(
-        //     client => client.id === id
-        // );
 
         const client = clients.find(
     client => client.id === id
@@ -201,6 +189,7 @@ nouveauClient.addEventListener("click", function() {
 btnAnnuler.addEventListener("click", () => {
     dialogClient.close();
 })
+
 
 
 function confirmerSuppression(client) {
