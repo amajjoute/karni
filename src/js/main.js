@@ -2,6 +2,8 @@ import {loadData ,saveData} from './storage.js';
 import { lireFile } from './import-export.js';
 import { creerDemo } from './demo.js';
 import { exportkarniData } from './import-export.js';
+import { renderDashboard } from './render.js';
+import { afficherClients } from './search.js';
 
 loadData()
 
@@ -27,7 +29,9 @@ charger_demo.addEventListener('click', ()=> {
             return
         }
         saveData(demoTab)
+        
     })
+    renderDashboard();
 })
 vider_carnet.addEventListener('click', ()=>{
     demanderConfirmation({titre: 'Vider le carnet ?', message: 'Êtes-vous sûr de vouloir vider votre carnet ? Cette action supprimera définitivement tous vos clients et toutes leurs opérations enregistrées. \nCette action est irréversible.'}, function(confirm)
@@ -39,6 +43,7 @@ vider_carnet.addEventListener('click', ()=>{
         "version": 1,
         clients: [],
         operations: [],})
+        renderDashboard();
 })
 })
 let apresConfirmation = null;
@@ -130,3 +135,5 @@ inputFile.addEventListener('change', (event) => {
     
     })
 })
+
+afficherClients()

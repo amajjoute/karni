@@ -1,12 +1,31 @@
-import { state } from "./state.js";
-import { calculateSolde, calculateStatut } from "./calculations.js";
+// -------------demo- test----------------------------------------------------
+console.log("SEARCH.JS EST BIEN CHARGÉ");
+import { creerDemo } from "./demo.js";
+
+const demo = creerDemo();
+
+const clients = demo.clients;
+const operations = demo.operations;
+
+// console.log("Clients:", clients.length);
+// console.log("Operations:", operations.length);
 
 
-export function initSearch() {
+// ----------------------test----------------------------------------------------
+// import { state } from "./state.js";
+// import { calculateSolde, calculateStatut } from "./calculations.js";
 
-    const state = state();
-    const clients = state.clients;
-    const operations = state.operations;
+
+    // const state = state();
+    // const clients = state.clients;
+    // const operations = state.operations
+
+
+
+    import {
+    calculateSolde,
+    calculateStatut
+} from "./calculations.js";
 
     const searchInput = document.querySelector("#recherche");
     const filtre = document.querySelector("#filtre-statut");
@@ -25,7 +44,7 @@ export function initSearch() {
 
     // -------- NORMALISATION --------
 
-    function normalizeText(text) {
+    export function normalizeText(text) {
         return text
             .trim()
             .toLowerCase()
@@ -35,9 +54,9 @@ export function initSearch() {
 
     // -------- AFFICHAGE --------
 
-    function afficherClients(resultat) {
+    export function afficherClients(resultat, clients, operations) {
 
-    listeClients.innerHTML = "";
+    listeClients.innerHTML = ""
 
     etatVide.classList.add("hidden");
     etatAucunResultat.classList.add("hidden");
@@ -58,7 +77,7 @@ export function initSearch() {
 
             clone.querySelector("li").dataset.clientId = client.id;
 
-            clone.querySelector(".client-nom").textContent = client.nom
+            clone.querySelector(".client-nom").textContent = client.nom;
 
             clone.querySelector(".client-solde").textContent =
             calculateSolde(operations, client.id) + " DH"
@@ -76,15 +95,14 @@ export function initSearch() {
 
     // -------- RECHERCHE + FILTRE --------
 
-    function filtrerClients() {
+    export function filtrerClients(clients, operations) {
+
 
     const recherche = normalizeText(searchInput.value);
 
     let resultat = clients.filter(client =>
         normalizeText(client.nom).startsWith(recherche)
-    );
-
-
+    )
 
     //  filtrer par statut------------------
 
@@ -156,23 +174,30 @@ export function initSearch() {
 
     resultat = clientsAvecDate.map(element => element.client);
 }
-   afficherClients(resultat); 
+   afficherClients(resultat, clients, operations);
 } 
+
 
 // -------- EVENTS --------
 
-searchInput.addEventListener("input", filtrerClients);
-filtre.addEventListener("change", filtrerClients);
-tri.addEventListener("change", filtrerClients);
+searchInput.addEventListener("input", function() {
+    filtrerClients(clients, operations);
+})
+
+filtre.addEventListener("change", function() {
+    filtrerClients(clients, operations);
+})
+
+tri.addEventListener("change", function() {
+    filtrerClients(clients, operations);
+})
 
 resetButton.addEventListener("click", function() {
     searchInput.value = "";
     filtre.value = "tous";
     tri.value = "nom";
 
-    filtrerClients();
+    filtrerClients(clients, operations);
 });
-
 // Affichage initial
-filtrerClients();
-}
+filtrerClients(clients, operations)

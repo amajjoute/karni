@@ -130,7 +130,7 @@ clientEnregistrer.addEventListener("click", function(event) {
 
     afficherClients();
     dialogClient.close();
-})
+}})
 
 
 
