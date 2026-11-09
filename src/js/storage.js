@@ -18,13 +18,8 @@ function loadData()
 }
 function addClient_storage(C_obj)
 {
-    console.log("hello from addclient");
-    console.log(C_obj);
-    
-    console.log(siClientValid(C_obj, state));
     
     if (siClientValid(C_obj, state).valide) {
-        console.log("client valide");
         
         state.clients.push(C_obj)
         if (!saveData(state).success) {
@@ -135,7 +130,6 @@ export function saveData(data) {
     try {
         setData(data)
         loadData()
-        console.log(state);
         
         return {
             success: true,
@@ -143,7 +137,6 @@ export function saveData(data) {
         };
 
     } catch (error) {
-        console.log(error);
         
         return {
             success: false,
