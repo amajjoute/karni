@@ -18,7 +18,14 @@ function loadData()
 }
 function addClient_storage(C_obj)
 {
+    console.log("hello from addclient");
+    console.log(C_obj);
+    
+    console.log(siClientValid(C_obj, state));
+    
     if (siClientValid(C_obj, state).valide) {
+        console.log("client valide");
+        
         state.clients.push(C_obj)
         if (!saveData(state).success) {
             return false
@@ -54,6 +61,7 @@ function return_client(clientID)
 
 function editClient(C_obj)
 {
+    
     let client = return_client(C_obj.id)
     if (client.index == -1) {
         return false;
@@ -79,7 +87,7 @@ function deleteOperation_storage(operationID)
 
         state.operations = newStateOp;
 
-        return saveData(state);
+        return saveData(state).success;
     } else {
         return false;
     }
@@ -88,13 +96,7 @@ function addOperation_storage(OP_obj)
 {
     if (siOperationValide(OP_obj, state).valide) {
         state.operations.push(OP_obj)
-        if (!saveData(state).success) {
-            return false
-        }
-        else
-        {
-            return true
-        }
+        return saveData(state).success
     }
     else
     {
@@ -122,7 +124,7 @@ function delete_client_storage(clientID)
         
         state.clients = state.clients.filter((client) => client.id != clientID)
         delete_client_operations_storage(clientID)
-        return saveData(state);
+        return saveData(state).success;
     }
 }
 function setData(data=state)
@@ -130,9 +132,6 @@ function setData(data=state)
     localStorage.setItem('karni-v1', JSON.stringify(data))
 }
 export function saveData(data) {
-    console.log("hello from save data");
-    console.log(data);
-    
     try {
         setData(data)
         loadData()
@@ -161,4 +160,4 @@ export {editClient}
 export {addClient_storage}
 export {addOperation_storage}
 export {deleteOperation_storage}
-
+export {return_client}
